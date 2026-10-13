@@ -1,12 +1,15 @@
 import { useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
+
 import SearchBar from "../SearchBar/SearchBar";
 import MovieGrid from "../MovieGrid/MovieGrid";
 import Loader from "../Loader/Loader";
 import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import MovieModal from "../MovieModal/MovieModal";
+
 import { fetchMovies } from "../../services/movieService";
 import type { Movie } from "../../types/movie";
+
 import styles from "./App.module.css";
 
 export default function App() {
@@ -15,7 +18,12 @@ export default function App() {
   const [error, setError] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null);
 
-  const handleSearch = async (query: string) => {
+  // -----------------------------
+  // Form Action handler
+  // -----------------------------
+  const handleSearch = async (formData: FormData) => {
+    const query = formData.get("query")?.toString().trim() || "";
+
     setMovies([]);
     setError(false);
     setLoading(true);
@@ -35,6 +43,9 @@ export default function App() {
     }
   };
 
+  // -----------------------------
+  // Modal handlers
+  // -----------------------------
   const handleSelectMovie = (movie: Movie) => {
     setSelectedMovie(movie);
   };
@@ -47,15 +58,21 @@ export default function App() {
     <div className={styles.app}>
       <Toaster position="top-right" />
 
-      <SearchBar onSubmit={handleSearch} />
+      {/* SearchBar через action */}
+      <SearchBar action={handleSearch} />
 
+      {/* Loader */}
       {loading && <Loader />}
+
+      {/* Error message */}
       {error && <ErrorMessage />}
 
+      {/* Movie grid */}
       {!loading && !error && movies.length > 0 && (
         <MovieGrid movies={movies} onSelect={handleSelectMovie} />
       )}
 
+      {/* Modal */}
       {selectedMovie && (
         <MovieModal movie={selectedMovie} onClose={handleCloseModal} />
       )}
