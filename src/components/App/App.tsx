@@ -21,27 +21,26 @@ export default function App() {
   // -----------------------------
   // Form Action handler
   // -----------------------------
-  const handleSearch = async (formData: FormData) => {
-    const query = formData.get("query")?.toString().trim() || "";
+  const handleSearch = async (query: string) => {
+  setMovies([]);
+  setError(false);
+  setLoading(true);
 
-    setMovies([]);
-    setError(false);
-    setLoading(true);
+  try {
+    const results = await fetchMovies(query);
 
-    try {
-      const results = await fetchMovies(query);
-
-      if (results.length === 0) {
-        toast.error("No movies found for your request.");
-      }
-
-      setMovies(results);
-    } catch {
-      setError(true);
-    } finally {
-      setLoading(false);
+    if (results.length === 0) {
+      toast.error("No movies found for your request.");
     }
-  };
+
+    setMovies(results);
+  } catch {
+    setError(true);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   // -----------------------------
   // Modal handlers
@@ -59,7 +58,8 @@ export default function App() {
       <Toaster position="top-right" />
 
       {/* SearchBar через action */}
-      <SearchBar action={handleSearch} />
+      <SearchBar onSubmit={handleSearch} />
+
 
       {/* Loader */}
       {loading && <Loader />}

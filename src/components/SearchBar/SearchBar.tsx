@@ -2,10 +2,10 @@ import styles from "./SearchBar.module.css";
 import toast from "react-hot-toast";
 
 export interface SearchBarProps {
-  action: (formData: FormData) => void;
+  onSubmit: (query: string) => void;
 }
 
-export default function SearchBar({ action }: SearchBarProps) {
+export default function SearchBar({ onSubmit }: SearchBarProps) {
   const handleAction = (formData: FormData) => {
     const value = formData.get("query")?.toString().trim() || "";
 
@@ -14,7 +14,7 @@ export default function SearchBar({ action }: SearchBarProps) {
       return;
     }
 
-    action(formData);
+    onSubmit(value); // передаємо ТІЛЬКИ рядок
   };
 
   return (
